@@ -1,0 +1,122 @@
+﻿@model UserModel
+@using WebLayer.Models
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width">
+
+    <title>@Model.UserName</title>
+
+</head>
+<body>
+    
+        <div class="col-sm-2 col-xs-1"></div>
+        <div class="col-sm-8  col-xs-10">
+            <div class="row user-profile-info">
+                <div class="col-sm-4 col-xs-6">
+                    <div class="profile-image-div">
+                        <img src="Files/mainImg.jpg" alt="Image" class="profile-image img-circle img-responsive" />
+                    </div>
+                </div>
+                <div class="col-sm-8 col-xs-6">
+                    <p class="pull-left">
+                    <h2 style="font-size: 4vw; margin-top:-1%;">@Model.UserName</h2>
+@if (User.Identity.Name != @Model.UserName)
+{
+
+    if (!Model.IsFollowing)
+    {
+        <button class="followButton btn btn-primary" data-username="@Model.UserName" data-status="@Model.IsFollowing">
+            <span id="followText">Follow</span>
+        </button>
+    }
+    else
+    {
+        <button class="followButton btn btn-primary" style="background-color:lawngreen" data-username="@Model.UserName" data-status="@Model.IsFollowing">
+            <span id="followText">Unfollow</span>
+        </button>
+    }
+    if (User.IsInRole("admin"))
+    {
+
+        if (!Model.IsBlocked)
+        {
+            <a href="#" class="blockButton btn btn-default" data-username="@Model.UserName" data-status="False">
+                <span>Block</span>
+            </a>
+        }
+        else
+        {
+            <a href="#" class="blockButton  btn btn-default" data-username="@Model.UserName" data-status="True">
+                <span>Unblock</span>
+            </a>
+        }
+        if (!Model.IsAdmin)
+        {
+            <a href="#" class="addToAdminButton  btn btn-default" data-username="@Model.UserName" data-status="False">
+                <span>Add Admin Rights</span>
+            </a>
+        }
+        else
+        {
+            <a href="#" class="addToAdminButton  btn btn-default" data-username="@Model.UserName" data-status="True">
+                <span>Remove Admin Rights</span>
+            </a>
+        }
+
+    }
+}
+                    </p>
+                   
+                    <ul class="nav nav-pills nav-justified">
+                      <li style="border-bottom: solid 2px #6495ED;">
+                           @Ajax.ActionLink("Images", "Images", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
+                              
+                          
+                      </li>
+                      <li>
+                          <p>
+                              @Ajax.ActionLink("Followers", "Followers", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
+                              <span>@Model.CountOfFollowers</span>
+                          </p>
+                      </li>
+                      <li>
+                          <p>
+                          @Ajax.ActionLink("Followings", "Followings", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
+                              <span>@Model.CountOfFollowings</span>
+                          </li>
+                       
+                            @if (User.Identity.Name == Model.UserName)
+                            {
+                                <li>
+                                    <button type="button" id="show-upload-form" class="btn btn-success"  onclick="$('#uploader').toggle();">+</button>
+                                </li>
+                            }
+                               
+                    </ul>
+@if (User.Identity.Name == Model.UserName)
+{
+                    <div >
+                    <form class="form-group"  id="uploader" style="display:none">
+                        <label class="btn btn-default" for="imageInput">
+                        <input  id="imageInput" type="file" accept=".png,.jpg,.jpeg,.gif,.tif" multiple style="display:none;" onchange="$('#upload-file-info').html($(this).val());">
+                            Browse
+                        </label>
+                        <span class='label label-info' id="upload-file-info"></span>
+                        <textarea  id="imageText" name="fileText" class="form-control" rows="4"></textarea>
+                        <input class="btn btn-default pull-right"  id="uploadSubmit" value="Upload image" data-username="@Model.UserName">
+                    </form>
+                    </div>
+}
+                </div>  
+            </div>
+            <div id="profile-content" class="row"  data-username="@Model.UserName">
+                @Html.Action("Images", new { userName = Model.UserName })
+          </div>
+         </div>
+        <div class="col-sm-2 col-xs-1"></div>
+   
+</body>
+</html>
+

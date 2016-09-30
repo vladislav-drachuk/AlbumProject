@@ -1,0 +1,59 @@
+﻿@using WebLayer.Models;
+@using WebLayer.Helpers;
+
+@model ICollection<ImageModel>
+@{
+    Layout = null;
+}
+
+
+
+@foreach (var img in Model)
+{
+  <div class="col-sm-4 col-xs-4" style="margin-top: 2%;">
+        <a href="#@img.Id" rel="gallery" class="fancybox">
+            <div class="imagediv">
+                <img src="@Url.Content(img.Url)" alt="Image" class="galeryImage  img-responsive full-width" id="2689409b-5d23-4aca-8cb3-0b23f3753a83" />
+            </div>
+        </a>
+      <div id="@img.Id" class="popup"style="display:none">
+          <div class="panel-default">
+              <div class="panel-heading">@Html.ActionLink(img.UserName, "Index", "User", new { userName = img.UserName }, null)</div>
+              <div class="panel-thumbnail">
+                  <img src="@Url.Content(img.Url)" alt="Image" class="galeryImage-full img-responsive  img-responsive" data-id="@img.Id" />
+              </div>
+              <div class="panel-body description">
+                  @MvcHtmlString.Create(img.Description)
+                  <p>
+                      
+                      <a href="#" class="delete"data-imageid="@img.Id" data-username="@img.UserName" data-from="userpage">Delete</a>
+                  </p>
+                  <p class="pull-right">
+                      <span class="countOfLikes">@img.CountOfLikes</span>
+                     @if (img.IsLiked)
+                          {
+                               <a href="#" class="likeButton  gipx-2x"  style="color:#E84062" data-imageid="@img.Id" data-status="@img.IsLiked">
+                              <span class="glyphicon glyphicon-heart"></span>
+                                   </a>
+                     }
+                     else
+                     { <a href="#" class="likeButton  gipx-2x" style="color:#FBACBC;" data-imageid="@img.Id" data-status="@img.IsLiked">
+                        <span class="glyphicon glyphicon-heart"></span>
+                      </a>
+                        }
+
+                       </p>
+              </div>
+          </div>
+      </div>
+    </div>
+
+}
+
+@if (ViewBag.IsEnd != true)
+{
+    <div style="text-align:center;" id="more-div">
+        <button class="btn btn-default btn-circle" id="more">More</button>
+   </div>
+ }
+

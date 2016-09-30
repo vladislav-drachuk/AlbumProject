@@ -1,0 +1,15 @@
+﻿@model IEnumerable<WebLayer.Models.UserModel>
+@using WebLayer.Models;
+
+
+@if (ViewBag.Message != null)
+{
+    <h2>ViewBag.Message</h2>
+}
+
+@foreach (UserModel user in @Model)
+{
+    <div>
+        @Html.ActionLink(user.UserName, "Index", new { userName = user.UserName })
+    </div>
+}

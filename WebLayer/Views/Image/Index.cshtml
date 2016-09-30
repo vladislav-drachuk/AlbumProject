@@ -1,0 +1,27 @@
+﻿@model WebLayer.Models.ImageModel
+
+<div class="imagepost panel-default">
+    <div class="panel-heading">@Html.ActionLink(Model.UserName, "Index", "User", new { userName = Model.UserName }, null)</div>
+    <div class="panel-thumbnail">
+        <img src="@Url.Content(Model.Url)" alt="Image" class="galeryImage  img-responsive" id="@Model.Id" />
+    </div>
+    <div class="panel-body description">
+        @MvcHtmlString.Create(Model.Description)
+        <p>
+            @Ajax.ActionLink("Delete", "DeleteImage", "Image", new { id = Model.Id }, new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "profileContent" })
+        </p>
+        <p class="pull-right">
+            <span class="countOfLikes">@Model.CountOfLikes</span>
+            <a href="#" class="likeButton" data-imageid="@Model.Id" data-status="@Model.IsLiked">
+                @if (Model.IsLiked)
+                {
+                    <span class="glyphicon glyphicon-heart"></span>
+                }
+                else
+                {
+                    <span class="glyphicon glyphicon-heart"></span>
+                }
+            </a>
+        </p>
+    </div>
+</div>

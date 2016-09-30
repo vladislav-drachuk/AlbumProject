@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+   <!--Styles.Render("~/Content/css")-->
+ 
+    
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/scripts/jquery-3.1.0.js")
+    @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.js")
+    <link rel="stylesheet" href="~/Content/bootstrap.css" type="text/css" media="screen" />
+    @Scripts.Render("~/scripts/bootstrap.js")
+  
+    <link rel="stylesheet" href="~/Content/CustomStyle.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="~/Fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+    <script type="text/javascript" src="~/Fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+    <!-- Optionally add helpers - button, thumbnail and/or media -->
+    <link rel="stylesheet" href="~/Fancybox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" type="text/css" media="screen" />
+    <script type="text/javascript" src="~/Fancybox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+    <script type="text/javascript" src="~/Fancybox/source/helpers/jquery.fancybox-media.js?v=1.0.6"></script>
+
+    <link rel="stylesheet" href="~/Fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
+    <script type="text/javascript" src="~/Fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
+
+    <script src="~/Content/FollowScript.js"></script>
+    <script src="~/Content/LoadScript.js"></script>
+    <script src="~/Content/LikeScript.js"></script>
+    <script src="~/Content/UploadScript.js"></script>
+
+    <script src="~/Content/BlockScript.js"></script>
+    <script src="~/Content/AddAdminScript.js"></script>
+    <script src="~/Content/popupScript.js"></script>
+    <script src="~/Content/HashtagScript.js"></script>
+    <script src="~/Content/navigationScript.js"></script>
+
+   
+</head>
+<body>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+               
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (User.IsInRole("admin"))
+                    {
+                        <li class="dropdown">
+                            <button class="dropdown-toggle btn btn-default" style="margin-top:10%" data-toggle="dropdown">
+                                Admin
+                                <b class="caret"></b>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>@Ajax.ActionLink("Blocked List", "BlockedUsers", "Admin",null, new AjaxOptions { UpdateTargetId = "body-content" })</li>
+                                <li>@Ajax.ActionLink("Admin List", "Admins", "Admin",null, new AjaxOptions { UpdateTargetId = "body-content" })</li>
+
+                            </ul>
+                        </li>
+                    }
+                    <li><a href="/">Home</a></li>
+                    <li><a href="@Url.Action("Feed","Navigation")" class="glyphicon glyphicon-list-alt gi-2x navigation"></a></li>
+                    <li><a href="@Url.Action("Favorites","Navigation")" class="glyphicon glyphicon-heart gi-2x" id="navigation"></a></li>
+                    
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <form class="navbar-form navbar-left">
+                            <div class="input-group input-group-sm" style="max-width:180px;">
+                                <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search gi-1x"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li>@Html.ActionLink("Enter", "Login", "Account")</li>
+                        <li>@Html.ActionLink("Register", "Register", "Account")</li>
+                    }
+                    else
+                    {
+                        
+                        <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+                    }
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="box row container" id="body-content">
+
+        @RenderBody()
+    </div>
+        <hr />
+        
+ 
+       
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+
+   
+   <!--Scripts.Render("~/bundles/jquery")
+    Scripts.Render("~/bundles/bootstrap")--> 
+    @RenderSection("scripts", required: false)
+</body>
+</html>

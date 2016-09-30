@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+}
+<script src="~/Content/BlockScript.js"></script>
+<script src="~/Content/AddAdminScript.js"></script>
+
+@if(!ViewBag.IsBlocked)
+ {
+<a href="#" class="blockButton" data-username="@ViewBag.UserName" data-status="False">
+    <span>Block</span>
+</a>
+}
+else
+{
+<a href="#" class="blockButton" data-username="@ViewBag.UserName" data-status="True">
+    <span>Unblock</span>
+</a>
+}
+@if (!ViewBag.IsAdmin)
+ {
+<a href="#" class="addToAdminButton" data-username="@ViewBag.UserName" data-status="False">
+    <span>Add Admin Rights</span>
+</a>
+ }
+ else
+{
+<a href="#" class="addToAdminButton" data-username="@ViewBag.UserName" data-status="True">
+    <span>Remove Admin Rights</span>
+</a>
+}
