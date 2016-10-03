@@ -197,11 +197,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\AjaxOnlyAttribute .cs" />
     <Compile Include="Infrastructure\FileUploader .cs" />
     <Compile Include="Infrastructure\MvcExtensions.cs" />
     <Compile Include="Infrastructure\RazorViewToString.cs" />
     <Compile Include="Infrastructure\StatusSetter.cs" />
-    <Compile Include="Infrastructure\UrlGenerator.cs" />
     <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Models\ImageModel.cs" />
     <Compile Include="Models\ImageUploadModel.cs" />
@@ -219,6 +219,7 @@
     <Content Include="Content\DeleteImageScript.js" />
     <Content Include="Content\FollowScript.js" />
     <Content Include="Content\HashtagScript.js" />
+    <Content Include="Content\historyBackScript.js" />
     <Content Include="Content\jquery.fancybox-buttons.css" />
     <Content Include="Content\jquery.fancybox-thumbs.css" />
     <Content Include="Content\jquery.fancybox.css" />
@@ -262,8 +263,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Scripts\AddAdminScript.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.js" />
     <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Scripts\BlockScript.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="ApplicationInsights.config">
@@ -274,6 +277,9 @@
     <Content Include="Fancybox\README.md" />
     <Content Include="Fancybox\sprite.psd" />
     <None Include="Scripts\jquery-3.1.0.intellisense.js" />
+    <Content Include="Scripts\FollowScript.js" />
+    <Content Include="Scripts\HashtagScript.js" />
+    <Content Include="Scripts\historyBackScript.js" />
     <Content Include="Scripts\jquery-3.1.0.js" />
     <Content Include="Scripts\jquery-3.1.0.min.js" />
     <Content Include="Scripts\jquery-3.1.0.slim.js" />
@@ -281,11 +287,6 @@
     <Content Include="Scripts\jquery-3.1.0.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.0.min.map" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.fancybox-buttons.js" />
-    <Content Include="Scripts\jquery.fancybox-media.js" />
-    <Content Include="Scripts\jquery.fancybox-thumbs.js" />
-    <Content Include="Scripts\jquery.fancybox.js" />
-    <Content Include="Scripts\jquery.fancybox.pack.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -294,10 +295,15 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\knockout-2.1.0.debug.js" />
     <Content Include="Scripts\knockout-2.1.0.js" />
+    <Content Include="Scripts\LikeScript.js" />
+    <Content Include="Scripts\LoadScript.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\navigationScript.js" />
+    <Content Include="Scripts\popupScript.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\UploadScript.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -320,17 +326,12 @@
     <Content Include="Views\Account\SuccessRegister.cshtml" />
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\User\Followers.cshtml" />
-    <Content Include="Views\Search\Index.cshtml" />
-    <Content Include="Views\Search\Partial_Index.cshtml" />
-    <Content Include="Views\User\Followings.cshtml" />
-    <Content Include="Views\Shared\_UsersListPartial.cshtml" />
     <Content Include="Views\Admin\GetRoleStatus.cshtml" />
     <Content Include="Views\Navigation\NavigationImageView.cshtml" />
     <Content Include="Views\User\Images.cshtml" />
-    <Content Include="Views\User\черновикIndex.cshtml" />
     <Content Include="Views\Image\Index.cshtml" />
     <Content Include="Views\Admin\UserList.cshtml" />
-    <Content Include="Views\Shared\_NavihationLayout.cshtml" />
+    <Content Include="Views\Navigation\NavigationView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Images\" />

@@ -9,10 +9,11 @@ namespace WebLayer.Models
     {
         public string Id { get; set; }
         public string UserName { get; set; }
-        public ICollection<ImageModel> Images { get; set; }
+       
         public bool IsFollowing { get; set; }
         public int CountOfFollowers { get; set; }
         public int CountOfFollowings { get; set; }
+        public ImageModel ProfileImage { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsAdmin { get; set; }
 

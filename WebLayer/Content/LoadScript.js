@@ -26,7 +26,8 @@
        });
 }
 
-function loadNavigationImages(button) {
+function loadFavImages(button) {
+
     button.attr("disabled", true);
     var showButton = true;
     $.ajax(
@@ -44,6 +45,24 @@ function loadNavigationImages(button) {
      
 }
 
+function loadSearchImages(button, searchText) {
+
+    button.attr("disabled", true);
+    var showButton = true;
+    $.ajax(
+       {
+           type: 'GET',
+           url: '/Navigation/Search',
+           data: { searchText: searchText,loadMore: true },
+           dataType: "html",
+           cache: false
+       })
+           .done(function (partialViewResult) {
+               var html = $.parseHTML(partialViewResult);
+               $('#more-div').replaceWith(html);
+           });
+
+}
 
 
 
@@ -52,11 +71,17 @@ $(document).ready(function () {
 
 
     $(document).on('click','#more',function () {
-        if ($(this).data("from") == "navigation") {
-            var url = $(this).attr("href");
+        if ($(this).data("from") == "favorites") {
             var that = $(this);
             
-            loadNavigationImages(that)
+            loadFavImages(that)
+        }
+        else if ($(this).data("from") == "search") {
+            var key = $(this).data("key");
+            
+            var that = $(this);
+
+            loadSearchImages(that, key)
         }
         else {
            

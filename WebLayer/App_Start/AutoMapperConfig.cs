@@ -20,7 +20,7 @@ namespace WebLayer
                    .ForMember(dest => dest.IsFollowing, opt => opt.Ignore())
                    .ForMember(dest => dest.IsBlocked, opt => opt.Ignore())
                    .ForMember(dest => dest.IsFollowing, opt => opt.Ignore())
-                   .ForMember(dest => dest.Images, opt => opt.Ignore());
+                   .ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
                 cfg.CreateMap<ImageDTO, ImageModel>()
                    .ForMember(dest => dest.IsLiked, opt => opt.Ignore())
                    .ForMember(dest => dest.CountOfLikes, opt => opt.MapFrom(src => src.Likes.Count))

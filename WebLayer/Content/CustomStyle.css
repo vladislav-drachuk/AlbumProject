@@ -2,6 +2,25 @@
  {
            margin-top: 1%; /* Отступ сверху */
    }
+body
+  {
+    background-color:#F8F8FF;
+  }
+.centered-navbar {margin-top:1%; position:absolute; left:23%; width:50%; text-align:center;}
+
+.panel-default
+{
+  padding-right: 1%;
+  padding-left: 1%;
+  margin-bottom: 5%;
+  border: 1px solid;
+  border-color: #DCDCDC;
+
+}
+.panel-thumbnail
+{
+  background-color: #FAF0E6;
+}
 
 .btn-circle {
   margin-top: 5%;

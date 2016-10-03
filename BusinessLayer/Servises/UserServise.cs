@@ -37,11 +37,11 @@ namespace AlbumProject.BusinessLogicLayer.Servises
                 // создаем профиль клиента
                 
                 await Database.SaveAsync();
-                return new OperationDetails(true, "Регистрация успешно пройдена", "");
+                return new OperationDetails(true, "Registration successfully completed", "");
             }
             else
             {
-                return new OperationDetails(false, "Пользователь с таким логином уже существует", "Email");
+                return new OperationDetails(false, "Login already exist", "Email");
             }
         }
 

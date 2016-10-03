@@ -65,13 +65,18 @@ $(document).ready(function () {
         var username = $(this).data("username");
         
         var description = $("#imageText").val();
-       
+        var type = "galery";
+        if ($('#check_id').is(":checked")) {
+            type = "profile";
+        }
+        alert(type);
         var formData = new FormData();
         var totalFiles = document.getElementById("imageInput").files.length;
 
         var file = document.getElementById("imageInput").files[0];
         formData.append("FileUpload", file);
         formData.append("description", description);
+        formData.append("type", type);
         upload(formData, username);
         $("#uploader").trigger('reset');
         $("#imageInput").val("");

@@ -23,8 +23,7 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             });
         private IMapper mapper;
 
-       // private Configuration config;
-        //private Mapper mapper;
+      
        
         public UserProfileServise(IUnitOfWork iuow)
         {
@@ -36,6 +35,11 @@ namespace AlbumProject.BusinessLogicLayer.Servises
 
         }
 
+        /// <summary>
+        /// Method finds user by name
+        /// </summary>
+        /// <param name="userName">User username</param>
+        /// <returns>Return "OperationDetails" object, that gives informanion if method been executed successful </returns>
         public async Task<UserProfileDTO> FindProfileByName(string userName)
         {
             ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
@@ -71,21 +75,7 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             await Database.SaveAsync();
         }
         
-        private ICollection<UserProfileDTO> GetFollowers(ApplicationUser user)
-        {
-            var followers = Database.RelationshipManager.FindBy(r => r.FollowingUserId == user.Id).ToList()
-                                                        .Select(r => r.FollowerUser).ToList();
-            return mapper.Map<ICollection<ApplicationUser>, ICollection<UserProfileDTO>>(followers);
-        }
-
-        
-
-        private ICollection<UserProfileDTO> GetFollowings(ApplicationUser user)
-        {
-            var followings = Database.RelationshipManager.FindBy(r => r.FollowerUserId == user.Id).ToList()
-                                                         .Select(r => r.FollowingUser).ToList();
-            return mapper.Map<ICollection<ApplicationUser>, ICollection<UserProfileDTO>>(followings);
-        }
+      
 
 
 

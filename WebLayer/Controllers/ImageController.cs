@@ -19,10 +19,10 @@ namespace WebLayer.Controllers
 {
     public class ImageController : Controller
     {
-        ServiceCreator serviceCreator = new ServiceCreator();
+        
         IImageServise ims;
         ILikeServise ls;
-        int itemsPerPage = 3;
+       
         IMapper mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
 
 
@@ -30,6 +30,7 @@ namespace WebLayer.Controllers
 
         public ImageController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             ims = serviceCreator.CreateImageServise("DefaultConnection");
             ls = serviceCreator.CreateLikeServise("DefaultConnection");
            
@@ -37,13 +38,7 @@ namespace WebLayer.Controllers
 
         }
 
-        public ActionResult Index(string imageId)
-        {
-            ImageModel image = mapper.Map<ImageModel>(ims.GetImage(imageId));
-            image.SetLikeCount(ls);
-            image.SetLikeCount(ls);
-            return View(image);
-        }
+
 
         [Authorize]
         [HttpPost]
@@ -55,27 +50,44 @@ namespace WebLayer.Controllers
             }
             else
             {
-                if (Request.Files.Count > 0)
+                if (Request.Files.Count == 1)
                 {
                     string description = Request.Form[0];
+                    string type = Request.Form[1];
                     HttpPostedFileBase img = Request.Files[0];
-                    ImageDTO image = new ImageDTO() { UserId = User.Identity.GetUserId(), Description = description, IsMain = false };
-                    string extension = Path.GetExtension(img.FileName);
-                    string id = Guid.NewGuid().ToString();
-                    image.Id = id;
-                    image.Url = @"~/Files/" + id + extension;
-                    img.SaveAs(Server.MapPath(image.Url));
-                    await ims.CreateImage(image);
-                    return Json(new { result = true }, JsonRequestBehavior.AllowGet);
-
+                    if (img.IsImage())
+                    {
+                        ImageDTO image = new ImageDTO() { UserId = User.Identity.GetUserId() };
+                        if(type=="galery")
+                        {
+                            image.Description = description;
+                            image.IsMain = false;
+                        }
+                        else
+                        {
+                            image.Description = "";
+                            image.IsMain = true;
+                        }
+                        string extension = Path.GetExtension(img.FileName);
+                        string url = Guid.NewGuid().ToString();
+                        image.Url = @"~/Files/" + url + extension;
+                        img.SaveAs(Server.MapPath(image.Url));
+                        await ims.CreateImage(image);
+                        return Json(new { result = true }, JsonRequestBehavior.AllowGet);
+                    }
+                    else {
+                        return Json(new { result = false, message = "File not valid" }, JsonRequestBehavior.AllowGet);
+                    }
                 }
                 else
                 {
-                    return Json(new { result = false, message = "error" }, JsonRequestBehavior.AllowGet);
+                    return Json(new { result = false, message = "File not valid" }, JsonRequestBehavior.AllowGet);
                 }
             }
 
         }
+
+    
 
         [Authorize]
         [HttpPost]

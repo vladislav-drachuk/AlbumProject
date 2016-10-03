@@ -18,13 +18,14 @@ namespace WebLayer.Controllers
     [Authorize]
     public class FollowController : Controller
     {
-        ServiceCreator serviceCreator = new ServiceCreator();
+        
         IFollowingServise fs;
         IMapper mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
 
 
         public FollowController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             fs = serviceCreator.CreateFollowingServise("DefaultConnection");
         }
 
@@ -37,9 +38,16 @@ namespace WebLayer.Controllers
             }
             else
             {
-                await fs.Follow(User.Identity.Name, userName);
-                int followersNumber = fs.GetCountOfFollowers(userName);
-                return Json(new { result = true,  number = followersNumber }, JsonRequestBehavior.AllowGet);
+                var operation = await fs.Follow(User.Identity.Name, userName);
+                if (operation.Succedeed == true)
+                {
+                    int followersNumber = fs.GetCountOfFollowers(userName);
+                    return Json(new { result = true, number = followersNumber }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { result = false, message = operation.Message }, JsonRequestBehavior.AllowGet);
+                }
             }
         }
 
@@ -52,9 +60,16 @@ namespace WebLayer.Controllers
             }
             else
             {
-                await fs.Unfollow(User.Identity.Name, userName);
-                int followersNumber = fs.GetCountOfFollowers(userName);
-                return Json(new { result = true, number = followersNumber }, JsonRequestBehavior.AllowGet);
+                var operation = await fs.Unfollow(User.Identity.Name, userName);
+                if (operation.Succedeed == true)
+                {
+                    int followersNumber = fs.GetCountOfFollowers(userName);
+                    return Json(new { result = true, number = followersNumber }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { result = false, message = operation.Message }, JsonRequestBehavior.AllowGet);
+                }
             }
         }
 

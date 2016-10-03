@@ -8,8 +8,9 @@
 }
 <script src="~/Content/LikeScript.js"></script>
 <div class="row">
-    <div class="col-sm-3"></div>
+    <div class="col-sm-4"></div>
     <div class="col-sm-6">
+        <h2>@ViewBag.Message</h2>
         @foreach (var img in Model)
         {
 
@@ -24,27 +25,30 @@
                     @MvcHtmlString.Create(img.Description)
                     <p class="pull-right">
                         <span class="countOfLikes">@img.CountOfLikes</span>
-                        <a href="#" class="likeButton" data-imageid="@img.Id" data-status="@img.IsLiked">
+                       
                             @if (img.IsLiked)
-                {
-                                <span class="glyphicon glyphicon-heart"></span>
+                            {
+                                <a href="#" class="likeButton  gipx-2x" style="color:#E84062" data-imageid="@img.Id" data-status="@img.IsLiked">
+                                    <span class="glyphicon glyphicon-heart"></span>
+                                </a>
                             }
                             else
-                            {
+                            { <a href="#" class="likeButton  gipx-2x" style="color:#FBACBC;" data-imageid="@img.Id" data-status="@img.IsLiked">
                                 <span class="glyphicon glyphicon-heart"></span>
+                            </a>
                             }
-                        </a>
+                        
                     </p>
                 </div>
             </div>
         }
 
     </div>
-    <div class="col-sm-3"></div>
+    <div class="col-sm-2"></div>
 </div>
     @if (ViewBag.IsEnd != true)
     {
         <div style="text-align:center;" class="col-sm-12" id="more-div">
-            <button class="btn btn-default btn-circle" data-from="navigation" id="more">More</button>
+            <button class="btn btn-default btn-circle" data-from="@ViewBag.From" data-key="@ViewBag.Key"id="more">More</button>
         </div>
     }

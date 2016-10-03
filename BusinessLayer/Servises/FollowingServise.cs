@@ -8,6 +8,7 @@ using AutoMapper;
 using System.Linq;
 using System.Threading.Tasks;
 using AlbumProject.BusinessLogicLayer.MappingConfiguration;
+using AlbumProject.BusinessLogicLayer.Infrastructure;
 
 namespace AlbumProject.BusinessLogicLayer.Servises
 {
@@ -27,13 +28,27 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             mapper = conf.CreateMapper();
         }
 
-        public async Task Follow(string currUserName, string followUserName)
+        /// <summary>
+        /// Method follow one user to another
+        /// </summary>
+        /// <param name="currUserName">Follower username</param>
+        /// <param name="followUserName">Following username</param>
+        /// <returns>Return "OperationDetails" object, that gives informanion if method been executed successful </returns>
+        public async Task<OperationDetails> Follow(string currUserName, string followUserName)
         {
             ApplicationUser currUser = await Database.UserManager.FindByNameAsync(currUserName);
+            if (currUser == null)
+            {
+                return new OperationDetails(false, "User do not exist", "");
+            }
             ApplicationUser followUser = await Database.UserManager.FindByNameAsync(followUserName);
+            if (currUser == null)
+            {
+                return new OperationDetails(false, "User do not exist", "");
+            }
             if (currUserName == followUserName)
             {
-                throw new InvalidOperationException("Cant follow yourself");
+                return new OperationDetails(false, "Cant follow yourself", "");
             }
             else
             {
@@ -48,38 +63,75 @@ namespace AlbumProject.BusinessLogicLayer.Servises
                     };
                     Database.RelationshipManager.Create(rel);
                     await Database.SaveAsync();
-                   
+                    
                 }
+                return new OperationDetails(true, "", "");
             }
         }
 
-        public async Task Unfollow(string currUserName, string followUserName)
+        /// <summary>
+        /// Method unfollow one user from another
+        /// </summary>
+        /// <param name="currUserName">Follower username</param>
+        /// <param name="followUserName">Following username</param>
+        /// <returns>Return "OperationDetails" object, that gives informanion if method been executed successful </returns>
+        public async Task<OperationDetails> Unfollow(string currUserName, string followUserName)
         {
+           
             ApplicationUser currUser = await Database.UserManager.FindByNameAsync(currUserName);
+            if (currUser == null)
+            {
+                return new OperationDetails(false, "User do not exist", "");
+            }
             ApplicationUser followUser = await Database.UserManager.FindByNameAsync(followUserName);
+            if (currUser == null)
+            {
+                return new OperationDetails(false, "User do not exist", "");
+            }
             var rel =Database.RelationshipManager.FindBy(r => r.FollowerUserId == currUser.Id && r.FollowingUserId == followUser.Id).FirstOrDefault();
-            Database.RelationshipManager.Delete(rel);
-            await Database.SaveAsync();
-
+            if (rel != null)
+            {
+                Database.RelationshipManager.Delete(rel);
+                await Database.SaveAsync();
+            }
+            return new OperationDetails(true, "", "");
         }
 
+        /// <summary>
+        /// Method get the number of user's followers 
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <returns>Count of followers</returns>
         public int GetCountOfFollowers(string userName)
         {
             return Database.RelationshipManager.FindBy(r => r.FollowingUser.UserName == userName).Count();
         }
 
-
+        /// <summary>
+        /// Method get the number of user's followings 
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        /// /// <returns>Count of followings</returns>
         public int GetCountOfFollowings(string userName)
         {
             return Database.RelationshipManager.FindBy(r => r.FollowerUser.UserName == userName).Count();
         }
 
-
+        /// <summary>
+        /// Method check if one user follow another
+        /// </summary>
+        /// <param name="currUserName">Follower username</param>
+        /// <param name="followUserName">Following username</param>
         public bool IsFollowing(string curUserName, string userName)
         {
             return Database.RelationshipManager.FindBy(r => r.FollowerUser.UserName == curUserName && r.FollowingUser.UserName == userName).Count() == 1;
         }
 
+        /// <summary>
+        /// Method returns user's followers 
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <returns>Collection of followers</returns>
         public ICollection<UserProfileDTO> GetFollowers(string userName)
         {
             var followers = Database.RelationshipManager.FindBy(r => r.FollowingUser.UserName == userName).ToList()
@@ -87,6 +139,11 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             return mapper.Map<ICollection<ApplicationUser>, ICollection<UserProfileDTO>>(followers);
         }
 
+        /// <summary>
+        /// Method returns user's followings 
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <returns>Collection of followingss</returns>
         public ICollection<UserProfileDTO> GetFollowings(string userName)
         {
             var followings = Database.RelationshipManager.FindBy(r => r.FollowerUser.UserName == userName).ToList()
@@ -102,74 +159,4 @@ namespace AlbumProject.BusinessLogicLayer.Servises
 }
 
 
-      /*  public async Task UnFollow(string curUserId, string id)
-        {
-            if (curUserId == id)
-            {
-                throw new InvalidOperationException("Cant unfollow yourself");
-            }
-            else
-            {
-                if (IsFollowing(curUserId,id))
-                {
-                    var rel = db.RelationshipManager.FindBy(r => r.FollowerUserId == curUserId && r.FollowingUserId == id).FirstOrDefault();
-                    db.RelationshipManager.Delete(rel);
-                    await db.SaveAsync();
-                }
-            }
-        }
-      
-        public async Task<IEnumerable<UserProfileDTO>> GerFollowers(string id)
-        {
-            var rel = db.RelationshipManager.FindBy(r => r.FollowingUserId == id).ToList();
-
-            List <UserProfileDTO> followers = new List<UserProfileDTO>();
-            foreach(var r in rel)
-                {
-
-                     var follower = await  db.UserManager.FindByIdAsync(r.FollowerUserId);
-                    
-                //followers.Add(Mapper.Map<UserProfileDTO>(follower));
-                followers.Add(new UserProfileDTO { Id = follower.Id, UserName = follower.UserName });
-                }
-            return followers;
-        }
-
-
-        public async Task<IEnumerable<UserProfileDTO>> GerFollowings(string id)
-        {
-            var rel = db.RelationshipManager.FindBy(r => r.FollowerUserId == id).ToList();
-            List<UserProfileDTO> followings = new List<UserProfileDTO>();
-            foreach (var r in rel)
-            {
-                var follower = await db.UserManager.FindByIdAsync(r.FollowingUserId);
-                followings.Add(new UserProfileDTO { Id = follower.Id, UserName = follower.UserName });
-            }
-            return followings;
-        }
-
-
-        public bool IsFollowing(string curUserId, string id)
-        {
-            return db.RelationshipManager.FindBy(r => r.FollowerUserId == curUserId && r.FollowingUserId == id).Count()==1;
-        }
-        public bool IsFollowingByName(string curUserName, string userName)
-        {
-            return db.RelationshipManager.FindBy(r => r.FollowerUser.UserName == curUserName && r.FollowingUser.UserName == userName).Count()==1;
-        }
-
-
-        public int GetCountOfFollowers(string id)
-        {
-            return db.RelationshipManager.FindBy(r=>r.FollowingUserId == id).Count();
-        }
-
-
-        public int GetCountOfFollowings(string id)
-        {
-            return db.RelationshipManager.FindBy(r => r.FollowerUserId == id).Count();
-        }
-
-    }
-}
-*/
+    

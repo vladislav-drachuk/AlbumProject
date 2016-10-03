@@ -25,16 +25,16 @@
     <link rel="stylesheet" href="~/Fancybox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" type="text/css" media="screen" />
     <script type="text/javascript" src="~/Fancybox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
 
-    <script src="~/Content/FollowScript.js"></script>
-    <script src="~/Content/LoadScript.js"></script>
-    <script src="~/Content/LikeScript.js"></script>
-    <script src="~/Content/UploadScript.js"></script>
-
-    <script src="~/Content/BlockScript.js"></script>
-    <script src="~/Content/AddAdminScript.js"></script>
-    <script src="~/Content/popupScript.js"></script>
-    <script src="~/Content/HashtagScript.js"></script>
-    <script src="~/Content/navigationScript.js"></script>
+    <script src="~/Scripts/FollowScript.js"></script>
+    <script src="~/Scripts/LoadScript.js"></script>
+    <script src="~/Scripts/LikeScript.js"></script>
+    <script src="~/Scripts/UploadScript.js"></script>
+    <script src="~/Scripts/BlockScript.js"></script>
+    <script src="~/Scripts/AddAdminScript.js"></script>
+    <script src="~/Scripts/popupScript.js"></script>
+    <script src="~/Scripts/HashtagScript.js"></script>
+    <script src="~/Scripts/navigationScript.js"></script>
+    <script src="~/Scripts/historyBackScript.js"></script>
 
    
 </head>
@@ -65,36 +65,37 @@
                             </ul>
                         </li>
                     }
-                    <li><a href="/">Home</a></li>
-                    <li><a href="@Url.Action("Feed","Navigation")" class="glyphicon glyphicon-list-alt gi-2x navigation"></a></li>
+                    <li>@Html.ActionLink("Home","Index","Home")</li>
+                    <li><a href="@Url.Action("Feed","Navigation")" class="glyphicon glyphicon-list-alt gi-2x" id="newsfeed"></a></li>
                     <li><a href="@Url.Action("Favorites","Navigation")" class="glyphicon glyphicon-heart gi-2x" id="navigation"></a></li>
                     
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <form class="navbar-form navbar-left">
-                            <div class="input-group input-group-sm" style="max-width:180px;">
-                                <input class="form-control" placeholder="Search" name="srch-term" id="srch-term" type="text">
-                                <div class="input-group-btn">
-                                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search gi-1x"></i></button>
+           
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <form class="navbar-form navbar-left">
+                                <div class="input-group input-group-sm" style="max-width:180px;">
+                                    <input class="form-control" placeholder="Search" name="srch-term" id="searchText" type="text">
+                                    <div class="input-group-btn">
+                                        <button href="@Url.Action("Search","Navigation")" class="btn btn-default" id="searchButton" type="submit"><i class="glyphicon glyphicon-search gi-1x"></i></button>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
-                    </li>
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <li>@Html.ActionLink("Enter", "Login", "Account")</li>
-                        <li>@Html.ActionLink("Register", "Register", "Account")</li>
-                    }
-                    else
-                    {
-                        
-                        <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
-                    }
+                            </form>
+                        </li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li>@Html.ActionLink("Enter", "Login", "Account")</li>
+                            <li>@Html.ActionLink("Register", "Register", "Account")</li>
+                        }
+                        else
+                        {
+
+                            <li>@Html.ActionLink("Logout", "Logout", "Account")</li>
+                        }
 
 
-                </ul>
-            </div>
+                    </ul>
+</div>
         </div>
     </div>
 

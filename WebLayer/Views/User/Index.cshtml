@@ -11,12 +11,20 @@
 </head>
 <body>
     
-        <div class="col-sm-2 col-xs-1"></div>
+        <div class="col-sm-3 col-xs-1"></div>
         <div class="col-sm-8  col-xs-10">
             <div class="row user-profile-info">
                 <div class="col-sm-4 col-xs-6">
                     <div class="profile-image-div">
-                        <img src="Files/mainImg.jpg" alt="Image" class="profile-image img-circle img-responsive" />
+                        @if (Model.ProfileImage != null)
+                        {
+                          
+                        <img src="@Url.Content(Model.ProfileImage.Url)" alt="Image" class="profile-image img-circle img-responsive" />
+                        }
+                        else
+                        {
+                            <img src="Files/mainImg.jpg" alt="Image" class="profile-image img-circle img-responsive" />
+                        }
                     </div>
                 </div>
                 <div class="col-sm-8 col-xs-6">
@@ -70,21 +78,18 @@
                     </p>
                    
                     <ul class="nav nav-pills nav-justified">
-                      <li style="border-bottom: solid 2px #6495ED;">
+                      <li class="active-profile-pill">
                            @Ajax.ActionLink("Images", "Images", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
                               
                           
                       </li>
                       <li>
-                          <p>
                               @Ajax.ActionLink("Followers", "Followers", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
-                              <span>@Model.CountOfFollowers</span>
-                          </p>
+                  
                       </li>
                       <li>
-                          <p>
-                          @Ajax.ActionLink("Followings", "Followings", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
-                              <span>@Model.CountOfFollowings</span>
+                              @Ajax.ActionLink("Followings", "Followings", new { userName = Model.UserName }, new AjaxOptions { UpdateTargetId = "profile-content" })
+                     
                           </li>
                        
                             @if (User.Identity.Name == Model.UserName)
@@ -105,6 +110,7 @@
                         </label>
                         <span class='label label-info' id="upload-file-info"></span>
                         <textarea  id="imageText" name="fileText" class="form-control" rows="4"></textarea>
+                        <input type="checkbox" id="check_id" value="a2">As profile image<Br>
                         <input class="btn btn-default pull-right"  id="uploadSubmit" value="Upload image" data-username="@Model.UserName">
                     </form>
                     </div>
@@ -115,7 +121,7 @@
                 @Html.Action("Images", new { userName = Model.UserName })
           </div>
          </div>
-        <div class="col-sm-2 col-xs-1"></div>
+        <div class="col-sm-1 col-xs-1"></div>
    
 </body>
 </html>

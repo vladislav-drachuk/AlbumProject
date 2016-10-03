@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="eb35c3e52dee4cd7a26c531359e2f06d" Name="Diagram1" ZoomLevel="100">
+        <EntityTypeShape EntityType="testPr.mdfModel.Role" Width="2.125" PointX="1.875" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="testPr.mdfModel.User" Width="2.5" PointX="5.75" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="testPr.mdfModel.Image" Width="1.5" PointX="9.375" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="testPr.mdfModel.Like" Width="1.5" PointX="2.125" PointY="3.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="testPr.mdfModel.Relationship" Width="1.5" PointX="10.875" PointY="1.25" IsExpanded="true" />
+        <AssociationConnector Association="testPr.mdfModel.FK_dbo_Images_dbo_AspNetUsers_ApplicationUserId" ManuallyRouted="false" />
+        <AssociationConnector Association="testPr.mdfModel.FK_dbo_Likes_dbo_AspNetUsers_ApplicationUserId" ManuallyRouted="false" />
+        <AssociationConnector Association="testPr.mdfModel.FK_dbo_Relationships_dbo_AspNetUsers_FollowerUserId" ManuallyRouted="false" />
+        <AssociationConnector Association="testPr.mdfModel.FK_dbo_Relationships_dbo_AspNetUsers_FollowingUserId" ManuallyRouted="false" />
+        <AssociationConnector Association="testPr.mdfModel.FK_dbo_Likes_dbo_Images_ImageId" ManuallyRouted="false" />
+        <AssociationConnector Association="testPr.mdfModel.AspNetUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

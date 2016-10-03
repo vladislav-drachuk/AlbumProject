@@ -21,17 +21,18 @@ namespace WebLayer.Controllers
     public class LikeController : Controller
     {
        
-        ServiceCreator serviceCreator = new ServiceCreator();
+       
         ILikeServise ls;
         IMapper mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
 
 
         public LikeController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             ls = serviceCreator.CreateLikeServise("DefaultConnection");
         }
 
-
+        
         [HttpPost]
         public async Task<JsonResult> LikeImage(string imageId)
         {
@@ -41,13 +42,21 @@ namespace WebLayer.Controllers
             }
             else
             {
-                await ls.LikePhoto(User.Identity.Name, imageId);
-                var count = ls.GetCountOfIsLikes(imageId);
-                return Json(new { result = true,countOfLikes = count }, JsonRequestBehavior.AllowGet);
+                var operation = await ls.LikePhoto(User.Identity.Name, imageId);
+                if (operation.Succedeed == true)
+                {
+                    var count = ls.GetCountOfIsLikes(imageId);
+                    return Json(new { result = true, countOfLikes = count }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { result = false, message = operation.Message}, JsonRequestBehavior.AllowGet);
+                }
             }
 
         }
 
+       
         [HttpPost]
         public async Task<JsonResult> UnlikeImage(string imageId)
         {
@@ -57,11 +66,19 @@ namespace WebLayer.Controllers
             }
             else
             {
-                await ls.UnLikePhoto(User.Identity.Name, imageId);
-                var count = ls.GetCountOfIsLikes(imageId);
-                return Json(new { result = true, countOfLikes = count }, JsonRequestBehavior.AllowGet);
+                var operation = await ls.UnLikePhoto(User.Identity.Name, imageId);
+                if (operation.Succedeed == true)
+                {
+                    var count = ls.GetCountOfIsLikes(imageId);
+                    return Json(new { result = true, countOfLikes = count }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { result = false, message = operation.Message }, JsonRequestBehavior.AllowGet);
+                }
             }
         }
+        
 
 
     }

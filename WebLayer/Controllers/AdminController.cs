@@ -16,9 +16,10 @@ using WebLayer.Helpers;
 
 namespace WebLayer.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class AdminController : Controller
     {
-        ServiceCreator serviceCreator = new ServiceCreator();
+        
         IRoleServise rs;
         
         IMapper mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
@@ -26,13 +27,15 @@ namespace WebLayer.Controllers
 
         public AdminController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             rs = serviceCreator.CreateRoleServise("DefaultConnection");
             
         }
         [HttpPost]
         public async Task<ActionResult> Block(string userName)
         {
-            await rs.AddToRole(userName, "banned");
+          
+            await rs.AddToRole(userName, null);
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
@@ -52,17 +55,17 @@ namespace WebLayer.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddAdminStatus(string userName)
+        public  async Task<ActionResult> AddAdminStatus(string userName)
         {
-            
-            rs.AddToRole(userName, "admin");
+            await rs.DeleteFromRole(userName, "banned");
+            await rs.AddToRole(userName, "admin");
             return Json(true, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
-        public ActionResult RemoveAdminStatus(string userName)
+        public async Task<ActionResult> RemoveAdminStatus(string userName)
         {
-            rs.DeleteFromRole(userName, "admin");
+            await rs.DeleteFromRole(userName, "admin");
             return Json(true, JsonRequestBehavior.AllowGet);
         }
         public ActionResult Admins()

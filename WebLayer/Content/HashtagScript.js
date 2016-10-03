@@ -1,10 +1,11 @@
 ﻿/// <reference path="HashtagScript.js" />
-function search(text) {
+function search(text, button) {
+    
     $.ajax(
        {
            type: 'GET',
            url: '/Navigation/Search',
-           data: { text: text},
+           data: { searchText: text },
            dataType: 'html',
            cache: false,
            success: function (data) {
@@ -29,7 +30,7 @@ $(document).ready(function () {
 
        
         var text = $(this).text();
-
+        
         var that = $(this);
         $.fancybox.close();
        

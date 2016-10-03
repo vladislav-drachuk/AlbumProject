@@ -12,3 +12,17 @@ C:\Work\Study\Epam\Course\HomeWork\AlbumProject\DataLayer\bin\Debug\Microsoft.As
 C:\Work\Study\Epam\Course\HomeWork\AlbumProject\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
 C:\Work\Study\Epam\Course\HomeWork\AlbumProject\DataLayer\obj\Debug\DataLayer.dll
 C:\Work\Study\Epam\Course\HomeWork\AlbumProject\DataLayer\obj\Debug\DataLayer.pdb
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\DataLayer.dll.config
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\DataLayer.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\DataLayer.pdb
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\EntityFramework.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\Microsoft.AspNet.Identity.Core.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\EntityFramework.xml
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\Microsoft.AspNet.Identity.Core.xml
+C:\Users\admin\Desktop\AlbumProject\DataLayer\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\admin\Desktop\AlbumProject\DataLayer\obj\Debug\DataLayer.csprojResolveAssemblyReference.cache
+C:\Users\admin\Desktop\AlbumProject\DataLayer\obj\Debug\DataLayer.dll
+C:\Users\admin\Desktop\AlbumProject\DataLayer\obj\Debug\DataLayer.pdb

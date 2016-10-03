@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using AlbumProject.BusinessLogicLayer.DataTransferObjects;
 using System.Threading;
 using System.Threading.Tasks;
+using AlbumProject.BusinessLogicLayer.Infrastructure;
 
 namespace AlbumProject.BusinessLogicLayer.Interfaces
 {
@@ -11,11 +12,8 @@ namespace AlbumProject.BusinessLogicLayer.Interfaces
 
         bool IsLiked(string userName, string imageId);
         int GetCountOfIsLikes(string imageId);
-        //Task<IEnumerable<UserProfileDTO>> GetUserProfilesByPhotoLike(string imageId);
-        Task LikePhoto(string userName, string imageId);
-        Task UnLikePhoto(string userName, string imageId);
-
-       // IEnumerable<PhotoDTO> GetLikedPhotoesByUserId(string imageId);
+        Task<OperationDetails> LikePhoto(string userName, string imageId);
+        Task<OperationDetails> UnLikePhoto(string userName, string imageId);
 
     }
    

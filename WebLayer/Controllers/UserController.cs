@@ -21,18 +21,19 @@ namespace WebLayer.Controllers
     
     public class UserController : Controller
     {
-        ServiceCreator serviceCreator = new ServiceCreator();
+      
         IUserProfileServise us;
         IFollowingServise fs;
         IImageServise ims;
         ILikeServise ls;
         IRoleServise rs;
-        int itemsPerPage = 3;
+        int itemsPerPage = 6;
         IMapper mapper = AutoMapperConfig.MapperConfiguration.CreateMapper();
 
 
         public UserController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             us = serviceCreator.CreateUserProfileServise("DefaultConnection");
             fs = serviceCreator.CreateFollowingServise("DefaultConnection");
             ims = serviceCreator.CreateImageServise("DefaultConnection");
@@ -47,6 +48,7 @@ namespace WebLayer.Controllers
             user.IsFollowing = fs.IsFollowing(User.Identity.Name,userName);
             user.CountOfFollowers = fs.GetCountOfFollowers(userName);
             user.CountOfFollowings = fs.GetCountOfFollowings(userName);
+            user.ProfileImage = mapper.Map<ImageModel>(ims.GetMainUserImageById(userName));
             if (User.IsInRole("admin"))
             {
                 user.IsBlocked = await rs.IsInRole(userName, "banned");
@@ -94,22 +96,32 @@ namespace WebLayer.Controllers
 
 
 
-
+        [AjaxOnly]
         public ActionResult Followers(string userName)
         {
             ViewBag.Message = "Followers";
             var followers= mapper
                 .Map<ICollection<UserProfileDTO>, ICollection<UserModel>>(fs.GetFollowers(userName));
-          
+            followers.All(follower =>
+            {
+                follower.ProfileImage = mapper.Map<ImageModel>(ims.GetMainUserImageById(follower.UserName));
+
+                     return true;
+            });
             return PartialView(followers);
         }
 
-       public  ActionResult Followings(string userName)
+        [AjaxOnly]
+        public ActionResult Followings(string userName)
         {
             ViewBag.Message = "Followings";
             var followings = mapper
                .Map<ICollection<UserProfileDTO>, ICollection<UserModel>>(fs.GetFollowings(userName));
-
+            followings.All(following =>
+                {
+                    following.ProfileImage = mapper.Map<ImageModel>(ims.GetMainUserImageById(following.UserName));
+                     return true;
+                });
             return PartialView("Followers",followings);
 
         }

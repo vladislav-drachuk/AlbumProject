@@ -4,53 +4,76 @@ using System.IO;
 
 namespace WebLayer.Infrastructure
 {
-    public class FileUploader : IHttpHandler
-    {
-
-        public void ProcessRequest(HttpContext context)
+ 
+        public static class HttpPostedFileBaseExtensions
         {
-            context.Response.ContentType = "text/plain";
-            try
+            public const int ImageMinimumBytes = 512;
+
+            public static bool IsImage(this HttpPostedFileBase postedFile)
             {
-                string dirFullPath = HttpContext.Current.Server.MapPath("~/MediaUploader/");
-                string[] files;
-                int numFiles;
-                files = System.IO.Directory.GetFiles(dirFullPath);
-                numFiles = files.Length;
-                numFiles = numFiles + 1;
-                string str_image = "";
-
-                foreach (string s in context.Request.Files)
+                //-------------------------------------------
+                //  Check the image mime types
+                //-------------------------------------------
+                if (postedFile.ContentType.ToLower() != "image/jpg" &&
+                            postedFile.ContentType.ToLower() != "image/jpeg" &&
+                            postedFile.ContentType.ToLower() != "image/pjpeg" &&
+                            postedFile.ContentType.ToLower() != "image/gif" &&
+                            postedFile.ContentType.ToLower() != "image/x-png" &&
+                            postedFile.ContentType.ToLower() != "image/png")
                 {
-                    HttpPostedFile file = context.Request.Files[s];
-                    string fileName = file.FileName;
-                    string fileExtension = file.ContentType;
+                    return false;
+                }
 
-                    if (!string.IsNullOrEmpty(fileName))
+                //-------------------------------------------
+                //  Check the image extension
+                //-------------------------------------------
+                if (Path.GetExtension(postedFile.FileName).ToLower() != ".jpg"
+                    && Path.GetExtension(postedFile.FileName).ToLower() != ".png"
+                    && Path.GetExtension(postedFile.FileName).ToLower() != ".gif"
+                    && Path.GetExtension(postedFile.FileName).ToLower() != ".jpeg")
+                {
+                    return false;
+                }
+
+                //-------------------------------------------
+                //  Attempt to read the file and check the first bytes
+                //-------------------------------------------
+                try
+                {
+                    if (!postedFile.InputStream.CanRead)
                     {
-                        fileExtension = Path.GetExtension(fileName);
-                        str_image = "MyPHOTO_" + numFiles.ToString() + fileExtension;
-                        string pathToSave_100 = HttpContext.Current.Server.MapPath("~/MediaUploader/") + str_image;
-                        file.SaveAs(pathToSave_100);
+                        return false;
+                    }
+
+                    if (postedFile.ContentLength < ImageMinimumBytes)
+                    {
+                        return false;
+                    }
+
+
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+
+                //-------------------------------------------
+                //  Try to instantiate new Bitmap, if .NET will throw exception
+                //  we can assume that it's not a valid image
+                //-------------------------------------------
+
+                try
+                {
+                    using (var bitmap = new System.Drawing.Bitmap(postedFile.InputStream))
+                    {
                     }
                 }
-                //  database record update logic here  ()
+                catch (Exception)
+                {
+                    return false;
+                }
 
-                context.Response.Write(str_image);
-            }
-            catch (Exception ac)
-            {
-
-            }
-        }
-
-        public bool IsReusable
-        {
-            get
-            {
-                return false;
+                return true;
             }
         }
-
     }
-}

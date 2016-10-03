@@ -21,7 +21,7 @@ namespace WebLayer.Controllers
     public class NavigationController : Controller
     {
 
-        ServiceCreator serviceCreator = new ServiceCreator();
+        
         IImageServise ims;
         ILikeServise likeServise;
       
@@ -31,6 +31,7 @@ namespace WebLayer.Controllers
 
         public NavigationController()
         {
+            ServiceCreator serviceCreator = new ServiceCreator();
             ims = serviceCreator.CreateImageServise("DefaultConnection");
             likeServise = serviceCreator.CreateLikeServise("DefaultConnection");
         }
@@ -44,56 +45,90 @@ namespace WebLayer.Controllers
             {
                 pg = (PagingInfo)Session["pageInfo"];
             }
+            else
+            {
+                ViewBag.Message = "Favorites";
+            }
             var imagesDTO = await ims.GetFavouriteImages(User.Identity.Name, pg);
             var images = mapper.Map<ICollection<ImageDTO>, ICollection<ImageModel>>(imagesDTO);
             images.SetLikeStatus(likeServise, User.Identity.Name);
             images.SetLikeCount(likeServise);
-            Session["pageInfo"] = pg;
-            ViewBag.IsEnd = pg.IsEnd;
-           /* if (Request.IsAjaxRequest())
-            {
-                bool isEnd = pg.IsEnd;
-                string result = RazorViewToString.RenderRazorViewToString(this, "GetUserImages", images);
-                return Json(new { isEnd = isEnd, partialView = result }, JsonRequestBehavior.AllowGet);
-            }
-            */
-            
-                return View("NavigationImageView", images);
-            
-        }
-
-        public async Task<ActionResult> Feed(bool loadMore = false)
-        {
-            /* PagingInfo pg = new PagingInfo(itemsPerPage);
-             if (loadMore)
-             {
-                 pg = (PagingInfo)Session["pageInfo"];
-             }
-             var imagesDTO = await ims.GetImageNewsFeed(User.Identity.Name, pg);
-             var images = mapper.Map<ICollection<ImageDTO>, ICollection<ImageModel>>(imagesDTO);
-             images.SetLikeStatus(likeServise, User.Identity.Name);
-             images.SetLikeCount(likeServise);
-             Session["pageInfo"] = pg;
-             ViewBag.IsEnd = pg.IsEnd;
-             if (Request.IsAjaxRequest())
-             {
-                 bool isEnd = pg.IsEnd;
-                 string result = RazorViewToString.RenderRazorViewToString(this, "GetUserImages", images);
-                 return Json(new { isEnd = isEnd, partialView = result }, JsonRequestBehavior.AllowGet);
-             }  
-             return View("NavigationImageView", images);
-             */
-            return HttpNotFound();
-        }
-
-        public ActionResult Search(string text="")
-        {
-            var images = mapper.Map<ICollection<ImageDTO>, ICollection<ImageModel>>(ims.SearchImage(text));
             images.All(i =>
             {
                 i.Description = MvcExtensions.FormatDescriptionText(i.Description);
                 return true;
             });
+            Session["pageInfo"] = pg;
+            ViewBag.IsEnd = pg.IsEnd;
+            ViewBag.From = "favorites";
+            if (!Request.IsAjaxRequest())
+            {
+                return View("NavigationView", images);
+            }
+         
+            
+                return View("NavigationImageView", images);
+            
+        }
+
+        [Authorize]
+        public async Task<ActionResult> Feed(bool loadMore = false)
+        {
+            PagingInfo pg = new PagingInfo(itemsPerPage);
+            if (loadMore)
+            {
+                pg = (PagingInfo)Session["pageInfo"];
+            }
+            else
+            {
+                ViewBag.Message = "Feed";
+            }
+            var imagesDTO = await ims.GetImageNewsFeed(User.Identity.Name, pg);
+            var images = mapper.Map<ICollection<ImageDTO>, ICollection<ImageModel>>(imagesDTO);
+            images.SetLikeStatus(likeServise, User.Identity.Name);
+            images.SetLikeCount(likeServise);
+            images.All(i =>
+            {
+                i.Description = MvcExtensions.FormatDescriptionText(i.Description);
+                return true;
+            });
+            Session["pageInfo"] = pg;
+            ViewBag.IsEnd = pg.IsEnd;
+            ViewBag.From = "newsfeed";
+            if (!Request.IsAjaxRequest())
+            {
+                return View("NavigationView", images);
+            }
+
+
+            return View("NavigationImageView", images);
+        }
+
+        
+        public ActionResult Search(string searchText = "", bool loadMore = false)
+        {
+            
+            PagingInfo pg = new PagingInfo(itemsPerPage);
+            if (loadMore)
+            {
+                pg = (PagingInfo)Session["pageInfo"];
+            }
+            else
+            {
+                ViewBag.Message = "Search: " + searchText;
+            }
+            var images = mapper.Map<ICollection<ImageDTO>, ICollection<ImageModel>>(ims.SearchImage(searchText, pg));
+            images.All(i =>
+            {
+                i.Description = MvcExtensions.FormatDescriptionText(i.Description);
+                return true;
+            });
+            images.SetLikeStatus(likeServise, User.Identity.Name);
+            images.SetLikeCount(likeServise);
+            Session["pageInfo"] = pg;
+            ViewBag.IsEnd = pg.IsEnd;
+            ViewBag.From = "search";
+            ViewBag.Key = searchText;
             return View("NavigationImageView", images);
         }
 

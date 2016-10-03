@@ -39,53 +39,71 @@ namespace AlbumProject.BusinessLogicLayer.Servises
 
         }
 
-   public ICollection<ImageDTO> GetUserGaleryImages(string userName, PagingInfo paggingInfo)
+        /// <summary>
+        /// Method returns user's images 
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <param name="pagingInfo">Information about current page</param>
+        ///  <returns>Collection of images</returns>
+        public ICollection<ImageDTO> GetUserGaleryImages(string userName, PagingInfo pagingInfo)
        {
-            if (paggingInfo.LastTime == null)
+            if (pagingInfo.LastTime == null)
             {
-                var images = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName).OrderByDescending(i => i.Date).Take(paggingInfo.ItemsPerPage).ToList();
-                bool isEnd = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName).OrderByDescending(i => i.Date).Count() <= paggingInfo.ItemsPerPage;
+                var images = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName 
+                                                   && i.IsMain == false)
+                                                   .OrderByDescending(i => i.Date)
+                                                   .Take(pagingInfo.ItemsPerPage)
+                                                   .ToList();
+                bool isEnd = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName
+                                                   && i.IsMain == false)
+                                                   .OrderByDescending(i => i.Date)
+                                                   .Count() <= pagingInfo.ItemsPerPage;
                 var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
-                paggingInfo.Update(imagesDTO, isEnd);
+                pagingInfo.Update(imagesDTO, isEnd);
                 
                 return imagesDTO;
             }
             else
             {
                 var images = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName
-                             && i.Date<=paggingInfo.LastTime
-                             && !paggingInfo.IdCollection.Contains(i.Id))
+                              && i.IsMain == false
+                             && i.Date<=pagingInfo.LastTime
+                             && !pagingInfo.IdCollection.Contains(i.Id))
                              .OrderByDescending(i => i.Date)
-                             .Take(paggingInfo.ItemsPerPage)
+                             .Take(pagingInfo.ItemsPerPage)
                              .ToList();
                 bool isEnd = Database.ImageManager.FindBy(i => i.ApplicationUser.UserName == userName
-                             && i.Date <= paggingInfo.LastTime
-                             && !paggingInfo.IdCollection.Contains(i.Id))
+                              && i.IsMain == false
+                             && i.Date <= pagingInfo.LastTime
+                             && !pagingInfo.IdCollection.Contains(i.Id))
                              .OrderByDescending(i => i.Date)
-                             .Count() <= paggingInfo.ItemsPerPage;
+                             .Count() <= pagingInfo.ItemsPerPage;
                 
                 var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
-                paggingInfo.Update(imagesDTO, isEnd);
+                pagingInfo.Update(imagesDTO, isEnd);
                 return imagesDTO;
             }
           
        }
      
-   public async Task<ImageDTO> GetMainUserImageById(string userName)
+   public ImageDTO GetMainUserImageById(string userName)
       {
-            ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
+          
             return mapper.Map<ImageDTO>(Database.ImageManager.FindBy
-                 (i => i.ApplicationUserId == user.Id && i.IsMain == true).FirstOrDefault());
+                 (i => i.ApplicationUser.UserName == userName && i.IsMain == true).FirstOrDefault());
     }
-
+  
    public async Task<ICollection<ImageDTO>> GetImageNewsFeed(string userName, PagingInfo pagingInfo)
         {
             ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
+            ICollection<string> followingsId = user.Followers.Select(f => f.FollowingUser.Id).ToList();
             if (pagingInfo.LastTime == null)
             {
-                var images = Database.ImageManager.FindBy(img => user.Followers.Select(f => f.Id).Contains(img.ApplicationUserId))
+                var images = Database.ImageManager.FindBy(img => followingsId.Any(followedId => followedId==img.ApplicationUserId)
+                                              && img.IsMain == false)
                                              .OrderByDescending(i => i.Date).Take(pagingInfo.ItemsPerPage).ToList();
-                bool isEnd = Database.ImageManager.FindBy(img => user.Followers.Select(f => f.Id).Contains(img.ApplicationUserId))
+                bool isEnd = Database.ImageManager.FindBy(img => followingsId.Any(followedId => followedId == img.ApplicationUserId)
+                                              && img.IsMain == false)
                                              .OrderByDescending(i => i.Date).Count() <= pagingInfo.ItemsPerPage;
                 var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
                 pagingInfo.Update(imagesDTO, isEnd);
@@ -93,13 +111,15 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             }
             else
             {
-                var images = Database.ImageManager.FindBy(img => user.Followers.Select(f => f.Id).Contains(img.ApplicationUserId)
+                var images = Database.ImageManager.FindBy(img => followingsId.Any(followedId => followedId == img.ApplicationUserId)
+                                && img.IsMain == false
                              && img.Date <= pagingInfo.LastTime
                              && !pagingInfo.IdCollection.Contains(img.Id))
                              .OrderByDescending(img => img.Date)
                              .Take(pagingInfo.ItemsPerPage)
                              .ToList();
-                bool isEnd = Database.ImageManager.FindBy(img => user.Followers.Select(f => f.Id).Contains(img.ApplicationUserId)
+                bool isEnd = Database.ImageManager.FindBy(img => followingsId.Any(followedId => followedId == img.ApplicationUserId)
+                             && img.IsMain == false
                              && img.Date <= pagingInfo.LastTime
                              && !pagingInfo.IdCollection.Contains(img.Id))
                              .OrderByDescending(img => img.Date)
@@ -111,34 +131,44 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             }
         }
 
-   public async Task<ICollection<ImageDTO>> GetFavouriteImages(string userName, PagingInfo pagingInfo)
+        /// <summary>
+        /// Method returns user's images that he liked
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <param name="pagingInfo">Information about current page</param>
+        ///  <returns>Collection of images</returns>
+        public async Task<ICollection<ImageDTO>> GetFavouriteImages(string userName, PagingInfo pagingInfo)
         {
             ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
             if (pagingInfo.LastTime == null)
             {
              
-                var images = Database.ImageManager.FindBy(image => image.Likes.All(l => l.ApplicationUser.UserName == userName))
+                var images = Database.ImageManager.FindBy(image => image.Likes.Any(l => l.ApplicationUser.UserName == userName)
+                                              && image.IsMain == false)
                                              .OrderByDescending(i => i.Date)
                                              .Take(pagingInfo.ItemsPerPage).Where(e => e != null).ToList();
-                                            /* .Select(like => like.Image)
-                                             .OrderByDescending(i => i.Date)
-                                             .Take(pagingInfo.ItemsPerPage).Where(e => e != null)
-                                             .ToList();*/
-                bool isEnd = Database.LikeManager.FindBy(like => like.ApplicationUser.UserName == user.UserName)
-                                             .OrderByDescending(i => i.Date).Count() <= pagingInfo.ItemsPerPage;
+                /* .Select(like => like.Image)
+                 .OrderByDescending(i => i.Date)
+                 .Take(pagingInfo.ItemsPerPage).Where(e => e != null)
+                 .ToList();*/
+                bool isEnd = Database.ImageManager.FindBy(image => image.Likes.Any(l => l.ApplicationUser.UserName == userName)
+                                    && image.IsMain == false)
+                              .OrderByDescending(i => i.Date).Count() <= pagingInfo.ItemsPerPage;
                 var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
                 pagingInfo.Update(imagesDTO, isEnd);
                 return imagesDTO;
             }
             else
             {
-                var images = Database.ImageManager.FindBy(image => image.Likes.All(l => l.ApplicationUser.UserName == userName)
+                var images = Database.ImageManager.FindBy(image => image.Likes.Any(l => l.ApplicationUser.UserName == userName)
+                             && image.IsMain == false
                              && image.Date <= pagingInfo.LastTime
                              && !pagingInfo.IdCollection.Contains(image.Id))
                               .OrderByDescending(i => i.Date)
                               .Take(pagingInfo.ItemsPerPage).Where(e => e != null)
                              .ToList();
-                bool isEnd = Database.ImageManager.FindBy(image => image.Likes.All(l => l.ApplicationUser.UserName == userName)
+                bool isEnd = Database.ImageManager.FindBy(image => image.Likes.Any(l => l.ApplicationUser.UserName == userName)
+                             && image.IsMain == false
                              && image.Date <= pagingInfo.LastTime
                              && !pagingInfo.IdCollection.Contains(image.Id))
                               .OrderByDescending(i => i.Date)
@@ -155,12 +185,25 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             var img = Database.ImageManager.GetSingle(imageId);
             return mapper.Map<ImageDTO>(img);   
     }
-    
-   public async Task CreateImage(ImageDTO image)
+
+        /// <summary>
+        /// Method save image to database
+        /// </summary>
+        /// <param name="image">Image</param>
+        public async Task CreateImage(ImageDTO image)
     {
+        if(image.IsMain==true)
+            {
+                var images = Database.ImageManager.FindBy(img => img.IsMain == true);
+                foreach(var img in images)
+                {
+                    Database.ImageManager.Delete(img);
+                }
+              
+            }
         Database.ImageManager.Create(new Image
         {
-            Id = image.Id,
+            
             Url = image.Url,
             IsMain = image.IsMain,
             Description = image.Description,
@@ -168,53 +211,82 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             ApplicationUser = await Database.UserManager.FindByIdAsync(image.UserId)
 
         });
+            
         await Database.SaveAsync();
     }
-
-   public async Task Delete(string imageId)
+       
+        /// <summary>
+        /// Method delete image from database
+        /// </summary>
+        /// <param name="image">Image</param>
+        public async Task Delete(string imageId)
     {
         var image = Database.ImageManager.GetSingle(imageId);
-        Database.ImageManager.Delete(image);
-           
-            foreach (var like in image.Likes)
+        if (image != null)
             {
-                Database.LikeManager.Delete(like);
-            }
-            await Database.SaveAsync();
+                Database.ImageManager.Delete(image);
 
+                foreach (var like in image.Likes)
+                {
+                    Database.LikeManager.Delete(like);
+                }
+                await Database.SaveAsync();
+            }
     }
 
-   public ICollection<ImageDTO> SearchImage(string searchText)
+        /// <summary>
+        /// Method search image by words in description
+        /// </summary>
+        /// <param name="searchText">Text to search in description</param>
+        ///  <param name="pagingInfo">Information about current page</param>
+        ///   <returns>Collection of images</returns>
+        public ICollection<ImageDTO> SearchImage(string searchText, PagingInfo pagingInfo)
         {
 
 
             var searchWords = searchText.Split(new[] {
                                     ' ', ',', ':', '?', '!', '+', '-', '(', ')' },
                                       StringSplitOptions.RemoveEmptyEntries);
-
-            var images = Database.ImageManager.GetAll().Where(p => searchWords.All(p.Description.Contains)).ToList();
-
-            return mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
-        }
-
-   private bool ContatinsSearchWords(string description, string[] searchwords)
-        {
-            bool isContain = true;
-            if (searchwords.Count() == 0)
+            if (pagingInfo.LastTime == null)
             {
-                return false;
-            }
-            foreach (var word in searchwords)
-            {
-                isContain = description.Contains(word);
-                if (isContain == false)
-                {
-                    return false;
-                }
+                var images = Database.ImageManager.GetAll().Where(image => searchWords.All(image.Description.Contains)
+                                              && image.IsMain==false)
+                                             .OrderByDescending(i => i.Date)
+                                             .Take(pagingInfo.ItemsPerPage).Where(e => e != null)
+                                             .ToList();
+                bool isEnd = Database.ImageManager.GetAll().Where(image => searchWords.All(image.Description.Contains)
+                                              && image.IsMain == false)
+                                             .OrderByDescending(i => i.Date).Count() <= pagingInfo.ItemsPerPage;
+                var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
+                pagingInfo.Update(imagesDTO, isEnd);
+                return imagesDTO;
 
             }
-            return isContain;
+            else
+            {
+                var images = Database.ImageManager.GetAll().Where(image => searchWords.All(image.Description.Contains)
+                             && image.IsMain == false
+                             && image.Date <= pagingInfo.LastTime
+                             && !pagingInfo.IdCollection.Contains(image.Id))
+                              .OrderByDescending(i => i.Date)
+                              .Take(pagingInfo.ItemsPerPage).Where(e => e != null)
+                             .ToList();
+                bool isEnd = Database.ImageManager.GetAll().Where(image => searchWords.All(image.Description.Contains)
+                             && image.IsMain == false
+                             && image.Date <= pagingInfo.LastTime
+                             && !pagingInfo.IdCollection.Contains(image.Id))
+                              .OrderByDescending(i => i.Date)
+                             .Count() <= pagingInfo.ItemsPerPage;
+
+                var imagesDTO = mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
+                pagingInfo.Update(imagesDTO, isEnd);
+                return imagesDTO;
+            }
+            //return mapper.Map<ICollection<Image>, ICollection<ImageDTO>>(images);
+
         }
+
+
 
         public void Dispose()
     {

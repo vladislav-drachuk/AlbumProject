@@ -1,4 +1,5 @@
 ﻿using AlbumProject.BusinessLogicLayer.DataTransferObjects;
+using AlbumProject.BusinessLogicLayer.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,8 @@ namespace AlbumProject.BusinessLogicLayer.Interfaces
 {
     public interface IFollowingServise
     {
-        Task Follow(string curUserName, string followUserName);
-        Task Unfollow(string currUserName, string followUserName);
+        Task<OperationDetails> Follow(string curUserName, string followUserName);
+        Task<OperationDetails> Unfollow(string currUserName, string followUserName);
         //Task UnFollow(string curUserId, string id);
         ICollection<UserProfileDTO> GetFollowers(string userName);
         ICollection<UserProfileDTO> GetFollowings(string userName);
