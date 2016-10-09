@@ -56,25 +56,7 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             return mapper.Map<UserProfileDTO>(user);
         }
 
-        public async Task DeleteAllInformation(string userName)
-        {
-            ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
-            foreach(var img in user.Images)
-            {
-                Database.ImageManager.Delete(img);
-                if ((System.IO.File.Exists(img.Url)))
-                {
-                    System.IO.File.Delete(img.Url);
-                }
-                foreach (var like in img.Likes)
-                {
-                    Database.LikeManager.Delete(like);
-                }
-               
-            }
-            await Database.SaveAsync();
-        }
-        
+
       
 
 

@@ -92,8 +92,14 @@ namespace AlbumProject.BusinessLogicLayer.Servises
             return mapper.Map<ImageDTO>(Database.ImageManager.FindBy
                  (i => i.ApplicationUser.UserName == userName && i.IsMain == true).FirstOrDefault());
     }
-  
-   public async Task<ICollection<ImageDTO>> GetImageNewsFeed(string userName, PagingInfo pagingInfo)
+
+        /// <summary>
+        /// Method returns followings images  of user
+        /// </summary>
+        /// <param name="userName">User's username</param>
+        ///  <param name="pagingInfo">Information about current page</param>
+        ///  <returns>Collection of images</returns>
+        public async Task<ICollection<ImageDTO>> GetImageNewsFeed(string userName, PagingInfo pagingInfo)
         {
             ApplicationUser user = await Database.UserManager.FindByNameAsync(userName);
             ICollection<string> followingsId = user.Followers.Select(f => f.FollowingUser.Id).ToList();

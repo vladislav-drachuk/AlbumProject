@@ -75,7 +75,6 @@
     <Compile Include="Interfaces\ICommentServise.cs" />
     <Compile Include="Interfaces\IFollowingServise.cs" />
     <Compile Include="Interfaces\ILikeServise.cs" />
-    <Compile Include="Interfaces\IPhotoSearchServise.cs" />
     <Compile Include="Interfaces\IImageServise.cs" />
     <Compile Include="Interfaces\IRoleServise.cs" />
     <Compile Include="Interfaces\ISearchServise.cs" />
@@ -84,9 +83,7 @@
     <Compile Include="Interfaces\IUserService.cs" />
     <Compile Include="MappingConfiguration\MapperConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Servises\ComplaintServise.cs" />
     <Compile Include="Servises\RoleServise.cs" />
-    <Compile Include="Servises\CommentServise.cs" />
     <Compile Include="Servises\FollowingServise.cs" />
     <Compile Include="Servises\LikeServise.cs" />
     <Compile Include="Servises\ImageServise.cs" />

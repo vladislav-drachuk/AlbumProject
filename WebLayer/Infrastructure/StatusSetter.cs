@@ -53,12 +53,6 @@ namespace WebLayer.Infrastructure
                 
         }
 
-        public static void SetRoleStatus(UserModel user, IRoleServise roleServise, string currUserName)
-        {
-
-        
-
-        }
 
     }
 }
